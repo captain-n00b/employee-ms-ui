@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import Employee from '../model/employee';
 import EmployeeService from '../services/EmployeeService';
+import ErrorField from './ErrorField';
 
 const UpdateEmployee = (props: any) => {
+    const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState("Please give proper values in field");
     const {id} = useParams();
     const navigate = useNavigate();
     const idNumber = (id: string | undefined): number | null => {
@@ -39,7 +42,9 @@ const UpdateEmployee = (props: any) => {
             navigate('/employeeList');
         })
         .catch((error) => {
-            console.log(error);
+            console.log("Error: ", error.response.data.errorMessage);
+            setIsError(true);
+            setMessage(error.response.data.errorMessage);
         });
     }
 
@@ -81,6 +86,7 @@ const UpdateEmployee = (props: any) => {
                     Cancel
                 </button>
             </div>
+            {isError ? <ErrorField message={message}/> : undefined}
         </div>
     </div>
   )
