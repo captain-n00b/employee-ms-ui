@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 // import Employee from '../model/employee';
 import EmployeeService from '../services/EmployeeService';
 import { useNavigate } from 'react-router';
+import ErrorField from './ErrorField';
 const AddEmployee = () => {
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("Please check the field");
     const navigate = useNavigate();
 
     const [employee, setEmployee] = useState({
@@ -21,10 +24,12 @@ const AddEmployee = () => {
         e.preventDefault();
         await EmployeeService.saveEmployee(employee).then((response) =>{
             console.log(response);
+            navigate("/EmployeeList");
         }).catch((error) => {
             console.error(error);
+            setIsError(true);
+            setErrorMessage(error.response.data.errorMessage);
         });
-        navigate("/EmployeeList");
     }
 
     const clearEmployee = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -68,6 +73,7 @@ const AddEmployee = () => {
                     Clear
                 </button>
             </div>
+            {isError ? <ErrorField message={errorMessage}/> : undefined}
         </div>
     </div>
   )
